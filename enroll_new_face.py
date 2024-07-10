@@ -84,7 +84,7 @@ def detect_smile_and_draw_bounding_box(vid):
 	gray_image = opencv.cvtColor(vid, opencv.COLOR_BGR2GRAY)
 	smile = smile_classifier.detectMultiScale(gray_image, 1.1, 5, minSize=(40, 40))
 	for (x, y, w, h) in smile:
-		opencv.rectangle(vid, (x, y), (x + w, y + h), (255, 0), 4)
+		opencv.rectangle(vid, (x, y), (x + w, y + h), (0, 0, 255), 4)
 	return faces
 
 while(True):
@@ -93,7 +93,17 @@ while(True):
 	ret, frame = cap.read()
 
 	# apply the function we created to the video frame
-	faces = detect_bounding_box(
+	faces = detect_face_and_draw_bounding_box(
+		frame
+	)
+
+	# apply the function we created to the video frame
+	eyes = detect_eyes_and_draw_bounding_box(
+		frame
+	)
+
+	# apply the function we created to the video frame
+	smile = detect_smile_and_draw_bounding_box(
 		frame
 	)
 
