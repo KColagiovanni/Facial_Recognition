@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.10 (facial_detection)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (facial_detection)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (Facial_Recognition)" project-jdk-type="Python SDK" />
 </project>

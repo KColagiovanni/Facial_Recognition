@@ -86,7 +86,7 @@ def detect_face_and_draw_bounding_box(vid):
 	gray_image = opencv.cvtColor(vid, opencv.COLOR_BGR2GRAY)
 	faces = face_classifier.detectMultiScale(gray_image, 1.5, 7, minSize=(40, 40))
 	for (x, y, w, h) in faces:
-		opencv.rectangle(vid, (x, y), (x + w, y + h), (0, 255, 0), 4)
+		opencv.rectangle(vid, (x, y), (x + w, y + h), (0, 255, 0), 1)
 	return faces
 
 # loop runs if capturing has been initialized.
@@ -119,41 +119,38 @@ while(True):
 	# Call the face function on the video frame
 	faces = detect_face_and_draw_bounding_box(frame)
 
-	print(faces)
+	if pic_count <= 10 and len(faces) > 0:
 
-	# if pic_count <= 10 and len(faces) > 0:
-	if len(faces) > 0:
+		# Assign the array values to variables.
 		x = faces[0][0]
 		y = faces[0][1]
 		w = faces[0][2]
 		h = faces[0][3]
-		print(f'x is: {x}')
-		print(f'y is: {y}')
-		print(f'w is: {w}')
-		print(f'h is: {h}')
-		print('----------')
-		print(f'abs(x - int(w/2)) is: {abs(x - int(w/2))}')
-		print(f'x + int(w/2) is: {x + int(w/2)}')
-		print(f'abs(y - int(h/2)) is: {abs(y - int(h/2))}')
-		print(f'y - int(h/2) is: {y + int(h/2)}')
-		face_only_image = frame[
-			abs(x - int(w/2)):x + int(w/2), abs(y - int(h/2)):y + int(h/2)
-		]
-		# opencv.imwrite(f'{new_user_directory}/{new_user_name}{pic_count}.png', face_only_image)
+
+		# Draw a circle inthe middle of the image
+		# opencv.circle(frame, (x + int(w / 2), y + int(h / 2)), 2, (0, 0, 255), 4)
+
+		# Define the area of the image to capture. In this case, it's just the users face.
+		face_only_image = frame[y:y + h, x:x + w]
+
+		# Save the image.
+		opencv.imwrite(f'{new_user_directory}/{new_user_name}{pic_count}.png', face_only_image)
 		pic_count += 1
 
-	# Call the eye function on the video frame
+	if pic_count > 10:
+		print(f'Images needed have been captured for {new_user_name}')
+		break
+
+	# Call the eye function on the video frame.
 	# eyes = detect_eyes_and_draw_bounding_box(frame)
 
-	# Call the smile function on the video frame
+	# Call the smile function on the video frame.
 	# smile = detect_smile_and_draw_bounding_box(frame)
 
-	# The original input frame is shown in the window
+	# The original frame is shown in the window.
 	opencv.imshow('Original', frame)
 
-	# print(frame_count)
-
-	# Wait for 'a' key to stop the program
+	# Wait for the 'q' key to be pressed to stop the program.
 	if opencv.waitKey(1) & 0xFF == ord('q'):
 		break
 
