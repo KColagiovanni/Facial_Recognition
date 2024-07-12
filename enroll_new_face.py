@@ -44,10 +44,26 @@
 # organize imports
 
 import cv2 as opencv
+import os
+import time
 
 # This will return video from the first webcam on your computer.
 cap = opencv.VideoCapture(0)
 count = 0
+frame_count = 0
+pic_count = 1
+output_file_name = 'output'
+file_extention1 = '.avi'
+file_extention2 = '.mp4'
+IMAGE_DIRECTORY = 'user_enrollment_pictures'
+
+new_user_name = input('What is the name of the new user to be enrolled?: ')
+new_user_directory = f'{IMAGE_DIRECTORY}/{new_user_name}'
+if os.path.exists(new_user_directory):
+	os.rmdir(new_user_directory)
+
+os.mkdir(new_user_directory)
+
 
 face_classifier = opencv.CascadeClassifier(
     opencv.data.haarcascades + "haarcascade_frontalface_default.xml"
@@ -65,7 +81,7 @@ smile_classifier = opencv.CascadeClassifier(
 # Detect faces and draws a rectangle around each one.
 def detect_face_and_draw_bounding_box(vid):
 	gray_image = opencv.cvtColor(vid, opencv.COLOR_BGR2GRAY)
-	faces = face_classifier.detectMultiScale(gray_image, 1.1, 5, minSize=(40, 40))
+	faces = face_classifier.detectMultiScale(gray_image, 1.5, 7, minSize=(40, 40))
 	for (x, y, w, h) in faces:
 		opencv.rectangle(vid, (x, y), (x + w, y + h), (0, 255, 0), 4)
 	return faces
@@ -74,7 +90,7 @@ def detect_face_and_draw_bounding_box(vid):
 # Detect faces and draws a rectangle around each one.
 def detect_eyes_and_draw_bounding_box(vid):
 	gray_image = opencv.cvtColor(vid, opencv.COLOR_BGR2GRAY)
-	eyes = eye_classifier.detectMultiScale(gray_image, 1.1, 5, minSize=(40, 40))
+	eyes = eye_classifier.detectMultiScale(gray_image)  # , 1.1, 5, minSize=(40, 40))
 	for (x, y, w, h) in eyes:
 		opencv.rectangle(vid, (x, y), (x + w, y + h), (255, 0, 0), 4)
 	return eyes
@@ -82,33 +98,41 @@ def detect_eyes_and_draw_bounding_box(vid):
 # Detect faces and draws a rectangle around each one.
 def detect_smile_and_draw_bounding_box(vid):
 	gray_image = opencv.cvtColor(vid, opencv.COLOR_BGR2GRAY)
-	smile = smile_classifier.detectMultiScale(gray_image, 1.1, 5, minSize=(40, 40))
+	smile = smile_classifier.detectMultiScale(gray_image)  # , 1.1, 5, minSize=(40, 40))
 	for (x, y, w, h) in smile:
 		opencv.rectangle(vid, (x, y), (x + w, y + h), (0, 0, 255), 4)
-	return faces
+	return smile
 
 while(True):
-	# reads frames from a camera
-	# ret checks return at each frame
+	# Reads frames from a camera. ret checks return at each frame.
 	ret, frame = cap.read()
 
-	# apply the function we created to the video frame
-	faces = detect_face_and_draw_bounding_box(
-		frame
-	)
+	if not ret:
+		print("error in retrieving frame")
+		break
 
-	# apply the function we created to the video frame
-	eyes = detect_eyes_and_draw_bounding_box(
-		frame
-	)
+	frame_count += 1
 
-	# apply the function we created to the video frame
-	smile = detect_smile_and_draw_bounding_box(
-		frame
-	)
+	# Call the face function on the video frame
+	faces = detect_face_and_draw_bounding_box(frame)
+
+	print(faces)
+
+	if pic_count <= 10 and len(faces) > 0:
+		print(faces[0])
+		opencv.imwrite(f'{IMAGE_DIRECTORY}/{new_user_name}/{new_user_name}{pic_count}.png', frame, faces[0])
+		pic_count += 1
+
+	# Call the eye function on the video frame
+	# eyes = detect_eyes_and_draw_bounding_box(frame)
+
+	# Call the smile function on the video frame
+	# smile = detect_smile_and_draw_bounding_box(frame)
 
 	# The original input frame is shown in the window
 	opencv.imshow('Original', frame)
+
+	print(frame_count)
 
 	# Wait for 'a' key to stop the program
 	if opencv.waitKey(1) & 0xFF == ord('q'):
@@ -119,3 +143,59 @@ cap.release()
 
 # De-allocate any associated memory usage
 opencv.destroyAllWindows()
+
+# ================================== First Version ==========================================
+# import cv2 as cv
+# import os
+# import time
+#
+# cam = cv.VideoCapture(0)
+# output_file_name = 'output'
+# file_extention1 = '.avi'
+# file_extention2 = '.mp4'
+# pic_count = 0
+# IMAGE_DIRECTORY = 'user_enrollment_pictures'
+#
+# new_user_name = input('What is the name of the new user to be enrolled?: ')
+# os.mkdir(f'{IMAGE_DIRECTORY}/{new_user_name}')
+#
+# # cc = cv.VideoWriter_fourcc(*'XVID')
+# # file = cv.VideoWriter(
+# #     f'{output_file_name}{file_extention2}',
+# #     cc,
+# #     15.0,
+# #     (640, 480)
+# # )
+#
+# if not cam.isOpened():
+#     print("error opening camera")
+#     exit()
+#
+# while True:
+#     # Capture frame-by-frame
+#     ret, frame = cam.read()
+#     # if frame is read correctly ret is True
+#     if not ret:
+#         print("error in retrieving frame")
+#         break
+#
+#     cv.imshow('frame', frame)
+#     # file.write(frame)
+#     # if cv.waitKey(1) & 0xFF == ord('y'):  # save on pressing 'y'
+#     if pic_count <= 10:
+#         time.sleep(1)
+#         print('3')
+#         time.sleep(1)
+#         print('2')
+#         time.sleep(1)
+#         print('1')
+#         time.sleep(0.25)
+#         cv.imwrite(f'{IMAGE_DIRECTORY}/{new_user_name}/{new_user_name}{pic_count}.png', frame)
+#         pic_count += 1
+#
+#     if cv.waitKey(1) == ord('q'):
+#         break
+#
+# cam.release()
+# # file.release()
+# cv.destroyAllWindows()
