@@ -57,6 +57,9 @@ file_extention1 = '.avi'
 file_extention2 = '.mp4'
 IMAGE_DIRECTORY = 'user_enrollment_pictures'
 
+if not os.path.exists(IMAGE_DIRECTORY):
+	os.mkdir(IMAGE_DIRECTORY)
+
 new_user_name = input('What is the name of the new user to be enrolled?: ')
 new_user_directory = f'{IMAGE_DIRECTORY}/{new_user_name}'
 if os.path.exists(new_user_directory):
@@ -118,9 +121,25 @@ while(True):
 
 	print(faces)
 
-	if pic_count <= 10 and len(faces) > 0:
-		print(faces[0])
-		opencv.imwrite(f'{IMAGE_DIRECTORY}/{new_user_name}/{new_user_name}{pic_count}.png', frame, faces[0])
+	# if pic_count <= 10 and len(faces) > 0:
+	if len(faces) > 0:
+		x = faces[0][0]
+		y = faces[0][1]
+		w = faces[0][2]
+		h = faces[0][3]
+		print(f'x is: {x}')
+		print(f'y is: {y}')
+		print(f'w is: {w}')
+		print(f'h is: {h}')
+		print('----------')
+		print(f'abs(x - int(w/2)) is: {abs(x - int(w/2))}')
+		print(f'x + int(w/2) is: {x + int(w/2)}')
+		print(f'abs(y - int(h/2)) is: {abs(y - int(h/2))}')
+		print(f'y - int(h/2) is: {y + int(h/2)}')
+		face_only_image = frame[
+			abs(x - int(w/2)):x + int(w/2), abs(y - int(h/2)):y + int(h/2)
+		]
+		# opencv.imwrite(f'{new_user_directory}/{new_user_name}{pic_count}.png', face_only_image)
 		pic_count += 1
 
 	# Call the eye function on the video frame
@@ -132,7 +151,7 @@ while(True):
 	# The original input frame is shown in the window
 	opencv.imshow('Original', frame)
 
-	print(frame_count)
+	# print(frame_count)
 
 	# Wait for 'a' key to stop the program
 	if opencv.waitKey(1) & 0xFF == ord('q'):
