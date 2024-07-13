@@ -4,8 +4,7 @@
 import sys
 import os.path
 
-# This is a tiny script to help you creating a CSV file from a face
-# database with a similar hierarchie:
+# This is a tiny script to create a CSV file from a face database with a similar hierarchy:
 #
 #  philipp@mango:~/facerec/data/at$ tree
 #  .
@@ -27,6 +26,8 @@ import os.path
 
 if __name__ == "__main__":
 
+    print(sys.argv)
+
     if len(sys.argv) != 2:
         print("usage: create_csv <base_path>")
         sys.exit(1)
@@ -34,11 +35,17 @@ if __name__ == "__main__":
     BASE_PATH=sys.argv[1]
     SEPARATOR=";"
 
+    print(f'BASE_PATH is: {BASE_PATH}')
+
     label = 0
     for dirname, dirnames, filenames in os.walk(BASE_PATH):
+        print(f'dirname is: {dirname}')
+        print(f'dirnames is: {dirnames}')
+        print(f'filenames is: {filenames}')
         for subdirname in dirnames:
             subject_path = os.path.join(dirname, subdirname)
+            print(f'subject_path is: {subject_path}')
             for filename in os.listdir(subject_path):
                 abs_path = "%s/%s" % (subject_path, filename)
-                print(f'{abs_path}{SEPARATOR}{label}')
+                print(f'Path is: {abs_path}{SEPARATOR}{label}')
             label = label + 1
