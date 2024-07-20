@@ -32,7 +32,10 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import sys, math, Image
+import sys, math, os
+import image as Image
+
+path_to_file = '/home/kevin/Programming/Python/OpenCv/FaceDetection/facial_detection/user_enrollment_pictures'
 
 def Distance(p1,p2):
   dx = p2[0] - p1[0]
@@ -84,9 +87,9 @@ def CropFace(image, eye_left=(0,0), eye_right=(0,0), offset_pct=(0.2,0.2), dest_
 
 def readFileNames():
     try:
-        inFile = open('path_to_created_csv_file.csv')
-    except:
-        raise IOError('There is no file named path_to_created_csv_file.csv in current directory.')
+        inFile = open(path_to_file)
+    except IOError:
+        print(f'There is no file named {path_to_file.split[-1]} in current directory.')
         return False
 
     picPath = []

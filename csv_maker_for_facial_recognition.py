@@ -29,23 +29,30 @@ if __name__ == "__main__":
     print(sys.argv)
 
     if len(sys.argv) != 2:
-        print("usage: create_csv <base_path>")
+        print('Please include the path to the directory and only the path to '
+              'the directory where the images are located as an argument.')
         sys.exit(1)
 
     BASE_PATH=sys.argv[1]
     SEPARATOR=";"
 
-    print(f'BASE_PATH is: {BASE_PATH}')
+    file_to_write = open('faces.txt', 'w')
 
     label = 0
+    dirname_dict = {}
     for dirname, dirnames, filenames in os.walk(BASE_PATH):
-        print(f'dirname is: {dirname}')
-        print(f'dirnames is: {dirnames}')
-        print(f'filenames is: {filenames}')
+        if len(dirname) > 0:
+            dir_count = 0
+            for dir in dirnames:
+                dirname_dict[dir] = dir_count
+                dir_count += 1
         for subdirname in dirnames:
             subject_path = os.path.join(dirname, subdirname)
             print(f'subject_path is: {subject_path}')
             for filename in os.listdir(subject_path):
                 abs_path = "%s/%s" % (subject_path, filename)
-                print(f'Path is: {abs_path}{SEPARATOR}{label}')
+                # print(f'Path is: {abs_path}{SEPARATOR}{label}')
+                file_to_write.write(f'{abs_path}{SEPARATOR}{label}\n')
             label = label + 1
+
+    file_to_write.close()

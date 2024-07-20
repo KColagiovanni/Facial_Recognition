@@ -52,6 +52,7 @@ cap = opencv.VideoCapture(0)
 count = 0
 frame_count = 0
 pic_count = 1
+multiplier = 0.2
 output_file_name = 'output'
 file_extention1 = '.avi'
 file_extention2 = '.mp4'
@@ -119,7 +120,7 @@ while(True):
 	# Call the face function on the video frame
 	faces = detect_face_and_draw_bounding_box(frame)
 
-	if pic_count <= 10 and len(faces) > 0:
+	if pic_count <= 10 and frame_count % 5 == 0 and len(faces) > 0:
 
 		# Assign the array values to variables.
 		x = faces[0][0]
@@ -131,14 +132,15 @@ while(True):
 		# opencv.circle(frame, (x + int(w / 2), y + int(h / 2)), 2, (0, 0, 255), 4)
 
 		# Define the area of the image to capture. In this case, it's just the users face.
-		face_only_image = frame[y:y + h, x:x + w]
+		# face_only_image = frame[y:y + h, x:x + w]
+		face_only_image = frame[y - int(y * multiplier):y + int(y * multiplier) + h, x - int(x * multiplier):x + int(x * multiplier) + w]
 
 		# Save the image.
 		opencv.imwrite(f'{new_user_directory}/{new_user_name}{pic_count}.png', face_only_image)
 		pic_count += 1
 
 	if pic_count > 10:
-		print(f'Images needed have been captured for {new_user_name}')
+		print(f'Images needed have been captured for {new_user_name} in {frame_count} frames.')
 		break
 
 	# Call the eye function on the video frame.
